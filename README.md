@@ -1,2 +1,2 @@
-﻿# proyecto-segundo-parcial
-Este proyecto de segundo parcial es para el segujndo parcial y es un proyecto
+﻿# proyecto-segundo-semestre
+Este proyecto de segundo semestre es para el segundo semestre y es un proyecto
