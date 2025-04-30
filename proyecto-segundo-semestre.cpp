@@ -3,6 +3,61 @@
 
 #include <iostream>
 
+<<<<<<< Updated upstream
+=======
+class Corazoncito {
+    private :
+    int hola;
+};
+
+class Emocion {
+
+};
+
+class Habito {
+
+};
+
+class HabitoDiario : public Habito {
+
+};
+
+class HabitoSemanal : public Habito {
+
+};
+
+class HabitoMensual : public Habito {
+
+};
+
+class Calendario {
+
+};
+
+class Logro {
+
+};
+
+class Meta {
+
+};
+
+class Consecuencia {
+
+};
+
+class ConsecuenciaPositiva : public Consecuencia {
+
+};
+
+class ConsecuenciaNegativa : public Consecuencia {
+
+};
+
+
+
+
+>>>>>>> Stashed changes
 int main()
 {
     std::cout << "Hello World!\n";
