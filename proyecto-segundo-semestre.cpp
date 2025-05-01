@@ -7,7 +7,7 @@
 =======
 class Corazoncito {
     private :
-    int hola;
+    int Nuevo;
 };
 
 class Emocion {
