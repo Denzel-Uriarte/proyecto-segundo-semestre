@@ -2,12 +2,10 @@
 //
 
 #include <iostream>
+#include <string>
+using namespace std;
 
-<<<<<<< Updated upstream
-=======
 class Corazoncito {
-    private :
-    int Nuevo;
 };
 
 class Emocion {
@@ -15,19 +13,13 @@ class Emocion {
 };
 
 class Habito {
-
-};
-
-class HabitoDiario : public Habito {
-
-};
-
-class HabitoSemanal : public Habito {
-
-};
-
-class HabitoMensual : public Habito {
-
+private:
+    string nombreHabito;
+    string descrpicionHabito;
+    bool habitoRealizado; // Marca si el habito de la meta ya fue realizado
+    double progreso; //Porcentaje de progreso del habito
+public:
+    
 };
 
 class Calendario {
@@ -39,7 +31,49 @@ class Logro {
 };
 
 class Meta {
-
+private:
+    string tipoMeta;
+    double cantidadMeta;// Se guarda cuanto quiere hacer de la meta
+    bool metaCumplida; // marca si la meta ya fue cumplida
+    double progresoMeta; // Marca el porcentaje de la meta
+public:
+    
+    void crearMeta(){ //Se le da la opcion de elegir entre opciones y que tanto quiere realizar de esa meta
+        
+        cout << "Eliga la meta que desea realizar" << endl;
+        //Metas disponibles: dormir, correr, comer, ejercicio.
+        
+        
+        
+        cout << "Cuanto desea ralizar de la meta " <<endl;
+        //slider o botones para marcar cuanto quiere realizar de la meta
+    }
+    
+    void marcarMeta(){ // Automaticamente revisa el progreso y una vez completado marca metaCumplida a 1
+        if(progresoMeta >= cantidadMeta){
+            cout << "La meta ha sido completada" << endl;
+        }else{
+            cout << "La meta aun no ha sido completada" << endl;
+        }
+    }
+    
+    void aumentarProgreso(){ //Permite al usuario indicar que tanto avanzo para su meta
+        
+        double temp;// variable que suma al progesoMeta
+        
+        cin >> temp; //se puede utilizar un boton para marcar cuanto avanzo
+        
+        progresoMeta += temp;
+        
+        marcarMeta();//Automaticamente llama a la funcion
+        
+    }
+    
+    void calcularPorcentajeMeta(){ //Determinara automaticamente el porcentaje de la meta
+        double porcentaje = (progresoMeta / cantidadMeta) * 100.0;
+        
+        cout << porcentaje << "%" << endl;
+    }
 };
 
 class Consecuencia {
@@ -54,10 +88,6 @@ class ConsecuenciaNegativa : public Consecuencia {
 
 };
 
-
-
-
->>>>>>> Stashed changes
 int main()
 {
     std::cout << "Hello World!\n";
