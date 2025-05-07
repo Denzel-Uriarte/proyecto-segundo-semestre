@@ -10,6 +10,7 @@
 #include <string>
 using namespace std;
 
+class yo{};
 class Corazoncito {
 private:
     int edad;
