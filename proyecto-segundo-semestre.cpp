@@ -1,11 +1,21 @@
-// proyecto-segundo-semestre.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+// Proyecto de segundo semestre
+// Programación orientada a objetos
+// Denzel Isaac Uriarte Munoz - 34684
+// Carlos 
+// Diana G.
+// Diego
+
 
 #include <iostream>
 #include <string>
 using namespace std;
 
 class Corazoncito {
+private:
+    int edad;
+    string sexo;
+    double peso;
+    double altura;
 };
 
 class Emocion {
@@ -20,6 +30,19 @@ private:
     double progreso; //Porcentaje de progreso del habito
 public:
     
+
+};
+
+class HabitoDiario : public Habito {
+
+};
+
+class HabitoSemanal : public Habito {
+
+};
+
+class HabitoMensual : public Habito {
+
 };
 
 class Calendario {
@@ -74,6 +97,7 @@ public:
         
         cout << porcentaje << "%" << endl;
     }
+
 };
 
 class Consecuencia {
