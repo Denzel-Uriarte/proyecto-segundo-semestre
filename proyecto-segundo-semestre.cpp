@@ -7,9 +7,15 @@
 
 
 #include <iostream>
+#include <string>
+using namespace std;
 
 class Corazoncito {
-
+private:
+    int edad;
+    string sexo;
+    double peso;
+    double altura;
 };
 
 class Emocion {
