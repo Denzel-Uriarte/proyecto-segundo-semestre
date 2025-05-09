@@ -54,7 +54,7 @@ class Meta {
 * Lo que se va a hacer enn esta clase es:
 * cada que se incumpla con un hábito, esta va a llamar a una consecuencia negativa y le quitara puntos a corazonsito (CLASS EMOCION) :(
 * Lo opuesto sucede si el habito de cumple
-* Cada habito afectara en menor o mayor medida a corasonsito, so take that in mind
+* Cada habito afectara en menor o mayor medida a corasonsito
 */
 
 class Consecuencia {
