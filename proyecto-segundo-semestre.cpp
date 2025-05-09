@@ -1,7 +1,7 @@
 // Proyecto de segundo semestre
 // Programación orientada a objetos
 // Denzel Isaac Uriarte Munoz - 34684
-// Carlos 
+// Carlos SSSSSSSSADSUBFUSGSFGGESBIFBTVEUBFJERNHVBGYEVCYFSHBFUSYRVESGYVCFHSBVURESYV.
 // Diana G.
 // Diego
 
@@ -50,8 +50,19 @@ class Meta {
 
 };
 
-class Consecuencia {
+/*
+* Lo que se va a hacer enn esta clase es:
+* cada que se incumpla con un hábito, esta va a llamar a una consecuencia negativa y le quitara puntos a corazonsito (CLASS EMOCION) :(
+* Lo opuesto sucede si el habito de cumple
+* Cada habito afectara en menor o mayor medida a corasonsito, so take that in mind
+*/
 
+class Consecuencia {
+    string nombre;
+    int valorEstres;
+    int valorAnimo;
+public:
+    void mostrarConsecuencias;
 };
 
 class ConsecuenciaPositiva : public Consecuencia {
