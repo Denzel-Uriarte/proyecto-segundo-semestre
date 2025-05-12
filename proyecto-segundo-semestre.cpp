@@ -10,13 +10,10 @@
 #include <string>
 using namespace std;
 
-class yo{};
+
 class Corazoncito {
 private:
-    int edad;
-    string sexo;
-    double peso;
-    double altura;
+    
 };
 
 class Emocion {
@@ -24,25 +21,6 @@ class Emocion {
 };
 
 class Habito {
-private:
-    string nombreHabito;
-    string descrpicionHabito;
-    bool habitoRealizado; // Marca si el habito de la meta ya fue realizado
-    double progreso; //Porcentaje de progreso del habito
-public:
-    
-
-};
-
-class HabitoDiario : public Habito {
-
-};
-
-class HabitoSemanal : public Habito {
-
-};
-
-class HabitoMensual : public Habito {
 
 };
 
