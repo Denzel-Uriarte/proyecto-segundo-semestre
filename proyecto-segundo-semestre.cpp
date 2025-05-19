@@ -10,8 +10,13 @@
 #include <string>
 #include <vector>
 #include <cstdlib>
+#include <tuple>
 
 using namespace std;
+
+
+
+
 
 class Emocion {
     int nivelAnimo;
@@ -24,7 +29,6 @@ public:
     int getNivelAnimo() const { return nivelAnimo; }
     int getNivelEstres() const { return nivelEstres; }
 
-
     void setNivelAnimo(int animo) { nivelAnimo = animo; }
     void setNivelEstres(int estres) { nivelEstres = estres; }
 
@@ -33,8 +37,6 @@ public:
 
     void disminuirEstres() { nivelEstres--; }
     void disminuirAnimo() { nivelAnimo--; }
-
-
 };
 
 class Consecuencia {
@@ -137,15 +139,15 @@ public:
 
     }
 
-    void evaluarEstado() const {
+    void evaluarEstado() const {  //funcion que llama los niveles de corazoncito
         int estres = emocionDeCora.getNivelEstres();
         int animo = emocionDeCora.getNivelAnimo();
 
-        if (estres < 6 || animo > 6) {
+        if (estres > 6 || animo < 6) { //dependiendo de su niveles, da una consecuencia negativa o positiva
             ConsecuenciaNegativa negativa;
             negativa.mostrarFrase(emocionDeCora);
         }
-        else if (estres > 6 || animo < 6) {
+        else {
             ConsecuenciaPositiva positiva;
             positiva.mostrarFrase(emocionDeCora);
         }
@@ -158,12 +160,13 @@ class Habito {
 private:
     static Habito habitoDisponible[5];
     static Habito habitoLista[5];
+
     string nombreHabito;
     string descrpicionHabito;
-    bool habitoRealizado; // Marca si el habito de la meta ya fue realizado
-    int frecuenciaMeta; //Cant. de veces necesarias para cumplir con el habito
-    int frecuenciaHecha; //Cant. de veces realizadas
-    string tipoHabito; //Habito Diario, Semanal, etc.
+    bool habitoRealizado;                               //Marca si el habito de la meta ya fue realizado
+    int frecuenciaMeta;                                 //Cant. de veces necesarias para cumplir con el habito
+    int frecuenciaHecha;                                //Cant. de veces realizadas
+    string tipoHabito;                                  //Habito Diario, Semanal, etc.
     
 public:
     Habito(string nombre, int frecuenciaMeta, string tipoHabito) : nombre(nombre), frecuenciaMeta(frecuenciaMeta), tipoHabito(tipoHabito) {}
@@ -306,7 +309,7 @@ public:
 
 int main()
 {
-    std::cout << "Hello World!\n";
+    cout << "------------------INICIO------------------\n";
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
