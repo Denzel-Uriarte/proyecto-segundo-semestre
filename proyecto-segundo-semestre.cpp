@@ -53,11 +53,6 @@ public:
     virtual void mostrarFrase(const Emocion& emocion) { //uso de override para llamar either consecuencia negativa o positiva
         int estres = emocion.getNivelEstres(); //saca los niveles de estres
         int animo = emocion.getNivelAnimo();
-
-        int indiceDeFrases = rand() % frases.size(); // selecionna un numero random de frases
-        cout << frases[indiceDeFrases] << endl; //desplega
-        Sleep(8000); // para imprimir para 8 segundos
-        system("CLS"); //limpia la consola (borra todo) 
     }
 
 };
@@ -75,12 +70,17 @@ public:
             "> u <",
             ":3",
             "Me siento rojito :D",
-            "yeeeeyyyyy xD"
+            "yeeeeyyyyy xD",
+            "boom boom pow!!! yeyooo!!! xD"
         };
     }
 
-    void mostrarFrase(const Emocion& emocion) override { //applica mostrar para consecuencias positivas 
-        Consecuencia::mostrarFrase(emocion);
+    void mostrarFrase(const Emocion& emocion) override {
+
+        int indiceDeFrases = rand() % frases.size(); // selecionna un numero random de frases
+        cout << frases[indiceDeFrases] << endl; //desplega
+        Sleep(8000); // para imprimir para 8 segundos
+        system("CLS"); //limpia la consola (borra todo) 
     }
 
 
@@ -100,12 +100,18 @@ public:
             "Por que tienes que hacerme sentir asi...",
             "Dx",
             ");",
-            "ayudame... D:"
+            "ayudame... D:",
+            "porfavor... ya no mas.... T_T"
+            "T_T"
         };
     }
 
     void mostrarFrase(const Emocion& emocion) override {
-        Consecuencia::mostrarFrase(emocion);
+
+        int indiceDeFrases = rand() % frases.size(); // selecionna un numero random de frases
+        cout << frases[indiceDeFrases] << endl; //desplega
+        Sleep(8000); // para imprimir para 8 segundos
+        system("CLS"); //limpia la consola (borra todo) 
     }
 
 };
