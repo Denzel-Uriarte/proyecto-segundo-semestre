@@ -86,6 +86,8 @@ public:
         }
     }
 
+
+
 };
 
 class Logro {
@@ -93,6 +95,7 @@ private:
 	string nombre;
 	string fechaDeObtencion;
 	string descripcion;
+    time_t fechaDeComplecion;
 public:
 	Logro(string nombre, string fechaDeObtencion, string descripcion)
         : nombre(nombre), fechaDeObtencion(fechaDeObtencion), descripcion(descripcion) {}
@@ -120,7 +123,9 @@ private:
     string tipoMeta;
     double cantidadMeta;// Se guarda cuanto quiere hacer de la meta
     bool metaCumplida; // marca si la meta ya fue cumplida
+    bool metaFallida;
     double progresoMeta; // Marca el porcentaje de la meta
+    time_t fechaLimite;
 public:
 
     void crearMeta() { //Se le da la opcion de elegir entre opciones y que tanto quiere realizar de esa meta
