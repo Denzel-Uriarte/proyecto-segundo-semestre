@@ -1,5 +1,5 @@
 // Proyecto de segundo semestre
-// Programación orientada a objetos
+// ProgramaciÃ³n orientada a objetos
 // Denzel Isaac Uriarte Munoz - 34684
 // Carlos Andres Salazar - 34539
 // Diana Gabriela Aguilar - 3823
@@ -278,12 +278,12 @@ public:
         return nombre;
     }
 
-    // Setter para descripción
+    // Setter para descripciÃ³n
     void setDescripcion(const string& nuevaDescripcion) {
         descripcionHabito = nuevaDescripcion;
     }
 
-    // Getter para descripción
+    // Getter para descripciÃ³n
     string getDescripcion() const {
         return descripcionHabito;
     }
@@ -382,7 +382,7 @@ public:
 
         for (int i = 0; i < 3; ++i) { //ciclo for que itera la cantidad de habitos
             cout << habitosCreados[i]->getNombre() << ": " << habitosCreados[i]->getDescripcion() << endl; //desplega
-            cout << "¿Has cumplido este hábito? (s/n): ";
+            cout << "Â¿Has cumplido este hÃ¡bito? (s/n): ";
             char respuesta; //una letra
             cin >> respuesta;
 
@@ -438,6 +438,10 @@ public:
             emocionDeCora.aumentarAnimo();
         }
        
+    }
+
+    void aumentarProgreso() {
+        MetasCreadas->aumentarProgreso();
     }
 };
 
