@@ -1,6 +1,15 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "Corazoncito.h" 
+#include <string>
+#include <fstream>
+#include <tuple>
+#include <string>
+#include <vector>
+#include <ctime>
+#include <cstdlib>
+#include <memory>
+
 
 int menuAbierto = 0;
 sf::Clock typeDelay;          // Reloj para controlar el tiempo entre letras
@@ -21,6 +30,10 @@ sf::Clock cursorClock;
 bool cursorVisible = true;
 sf::Time cursorBlinkInterval = sf::milliseconds(500);
 
+Emocion emocionCora;
+
+Corazoncito Corazon(emocionCora);
+
 
 
 
@@ -30,6 +43,12 @@ sf::RectangleShape s_botonAgregarHabito;
 
 sf::RectangleShape botonBorrarHabito;
 sf::RectangleShape s_botonBorrarHabito;
+
+sf::RectangleShape botonAgregarMeta;
+sf::RectangleShape s_botonAgregarMeta;
+
+sf::RectangleShape botonAumentarMeta;
+sf::RectangleShape s_botonAumentarMeta;
 
 sf::RectangleShape botonCorrecto_HB;
 sf::RectangleShape s_botonCorrecto_HB;
@@ -65,6 +84,8 @@ sf::RectangleShape s_botonEditarMeta;
 sf::RectangleShape botonEditarHabito;
 sf::RectangleShape s_botonEditarHabito;
 
+
+
 sf::RectangleShape s_botonHabito;
 sf::RectangleShape botonHabito;
 sf::Texture habitoIconTxt;
@@ -86,6 +107,25 @@ sf::RectangleShape s_bloqueCalendario;
 sf::RectangleShape botonEditarNombre;
 sf::RectangleShape s_botonEditarNombre;
 sf::Text inputTextEditarNombre;
+
+sf::Text HabitosTexto;
+sf::Text MetasTexto;
+
+sf::RectangleShape agregarHabito;
+
+sf::Text TextAgregarMeta;
+sf::Text TextAumentarMeta;
+
+sf::Text TextAgregarHabito;
+sf::Text TextBorrarHabito;
+
+sf::Text IngresarHabito;
+sf::Text InputIngresarHabito;
+sf::RectangleShape botonInputHabito;
+
+vector<sf::RectangleShape> recuadrosHabitos;
+vector<sf::Text> textosHabitos;
+
 
 
 //Funciones inicializar 
@@ -264,6 +304,18 @@ void initMenu1() {
     s_botonEditarHabito.setPosition(370 + 5, 700 + 5);
     s_botonEditarHabito.setFillColor(sf::Color(0, 25, 50, 80));
 
+    HabitosTexto.setFont(fontPixelBig);
+    HabitosTexto.setString("Habitos");
+    HabitosTexto.setCharacterSize(50);
+    HabitosTexto.setFillColor(sf::Color(50, 50, 50));
+    HabitosTexto.setPosition(430, 700);
+
+    MetasTexto.setFont(fontPixelBig);
+    MetasTexto.setString("Metas");
+    MetasTexto.setCharacterSize(50);
+    MetasTexto.setFillColor(sf::Color(50, 50, 50));
+    MetasTexto.setPosition(130, 700);
+
 
     if (!habitoIconTxt.loadFromFile("Textures/HabitoIcon.png"))
         std::cout << "Could not load HabitoIcon.png\n";
@@ -402,6 +454,135 @@ void initMenuEditarHabito() {
     botonSalir.setPosition(420, 485);
     botonSalir_HB.setPosition(420, 485);
     s_botonSalir_HB.setPosition(425, 490);
+
+
+
+    TextAgregarHabito.setFont(fontPixelBig);
+    TextAgregarHabito.setString("Agregar Habito");
+    TextAgregarHabito.setCharacterSize(24);
+    TextAgregarHabito.setFillColor(sf::Color(50, 50, 50));
+    TextAgregarHabito.setPosition(startX + 5, centerY + 105);
+
+    TextBorrarHabito.setFont(fontPixelBig);
+    TextBorrarHabito.setString("Borrar Habito");
+    TextBorrarHabito.setCharacterSize(24);
+    TextBorrarHabito.setFillColor(sf::Color(50, 50, 50));
+    TextBorrarHabito.setPosition(secondButtonX, centerY + 100);
+}
+
+void initMenuEditarMeta() {
+    background.setSize(sf::Vector2f(700, 900));
+    background.setPosition(0, 0);
+    background.setFillColor(sf::Color(0, 25, 50, 120)); // Fondo oscuro transparente
+
+    // Tamaño de los botones
+    float buttonWidth = 300;
+    float buttonHeight = 70;
+    float spacing = 30; // Espacio entre los dos botones horizontales
+
+    // Coordenadas para centrar horizontalmente los dos botones
+    float totalWidth = 2 * buttonWidth + spacing;
+    float startX = (700 - totalWidth) / 2.0f;
+    float centerY = 300;  // Altura fija para los botones principales
+
+    // Botón Agregar Hábito (izquierdo)
+    botonAgregarMeta.setSize(sf::Vector2f(buttonWidth, buttonHeight));
+    botonAgregarMeta.setPosition(startX, centerY + 100);
+    botonAgregarMeta.setFillColor(sf::Color(235, 240, 170));
+    botonAgregarMeta.setOutlineThickness(5);
+    botonAgregarMeta.setOutlineColor(sf::Color(230, 190, 140));
+
+    s_botonAgregarMeta.setSize(sf::Vector2f(buttonWidth, buttonHeight));
+    s_botonAgregarMeta.setPosition(startX + 5, centerY + 105);
+    s_botonAgregarMeta.setFillColor(sf::Color(0, 25, 50, 80));
+
+    // Botón Aumentar Hábito (derecho)
+    float secondButtonX = startX + buttonWidth + spacing;
+
+    botonAumentarMeta.setSize(sf::Vector2f(buttonWidth, buttonHeight));
+    botonAumentarMeta.setPosition(secondButtonX, centerY + 100);
+    botonAumentarMeta.setFillColor(sf::Color(235, 240, 170));
+    botonAumentarMeta.setOutlineThickness(5);
+    botonAumentarMeta.setOutlineColor(sf::Color(230, 190, 140));
+
+    s_botonAumentarMeta.setSize(sf::Vector2f(buttonWidth, buttonHeight));
+    s_botonAumentarMeta.setPosition(secondButtonX + 5, centerY + 105);
+    s_botonAumentarMeta.setFillColor(sf::Color(0, 25, 50, 80));
+
+    // Botón Salir en la posición fija especificada
+    botonSalir.setPosition(420, 485);
+    botonSalir_HB.setPosition(420, 485);
+    s_botonSalir_HB.setPosition(425, 490);
+
+
+    TextAgregarMeta.setFont(fontPixelBig);
+    TextAgregarMeta.setString("Agregar Meta");
+    TextAgregarMeta.setCharacterSize(30);
+    TextAgregarMeta.setFillColor(sf::Color(50, 50, 50));
+    TextAgregarMeta.setPosition(startX, centerY + 100);
+
+    TextAumentarMeta.setFont(fontPixelBig);
+    TextAumentarMeta.setString("Aumentar Meta");
+    TextAumentarMeta.setCharacterSize(30);
+    TextAumentarMeta.setFillColor(sf::Color(50, 50, 50));
+    TextAumentarMeta.setPosition(secondButtonX, centerY + 100);
+}
+
+void initMenuAgregarHabito() {
+    IngresarHabito.setFont(fontPixelBig);
+    IngresarHabito.setString("Ingrese el nombre del habito:");
+    IngresarHabito.setCharacterSize(30);
+    IngresarHabito.setFillColor(sf::Color(50, 50, 50));
+    IngresarHabito.setPosition(210, 345);
+
+    InputIngresarHabito.setFont(fontPixelSlim);
+    InputIngresarHabito.setCharacterSize(30);
+    InputIngresarHabito.setFillColor(sf::Color(0, 0, 0, 200));
+    InputIngresarHabito.setPosition(250, 420);
+
+    botonInputHabito.setSize(sf::Vector2f(300, 75));
+    botonInputHabito.setOrigin(125, 50);
+    botonInputHabito.setPosition(350, 450);
+    botonInputHabito.setOutlineThickness(5);
+    botonInputHabito.setOutlineColor(sf::Color(230, 200, 120));
+    botonInputHabito.setFillColor(sf::Color(240, 230, 180));
+
+    botonCorrecto.setTexture(botonCorrectoTex);
+    botonCorrecto.setScale(sf::Vector2f(3, 3));
+    botonCorrecto_HB.setSize(sf::Vector2f(47, 47));
+    botonCorrecto_HB.setOutlineThickness(1);
+    botonCorrecto_HB.setOutlineColor(sf::Color::Transparent);
+    botonCorrecto_HB.setFillColor(sf::Color::Transparent);
+
+    s_botonCorrecto_HB.setSize(sf::Vector2f(47, 47));
+    s_botonCorrecto_HB.setOutlineThickness(0);
+    s_botonCorrecto_HB.setOutlineColor(sf::Color(0, 25, 50, 80));
+    s_botonCorrecto_HB.setFillColor(sf::Color(0, 25, 50, 80));
+}
+
+void initMenuHabitos() {  // Se agrega la fuente como parámetro
+    for (int i = 0; i < 3; i++) {
+        sf::RectangleShape recuadro(sf::Vector2f(200, 100));
+        recuadro.setPosition(100, 150 + (i * 120));
+        recuadro.setFillColor(sf::Color::White);
+        recuadrosHabitos.push_back(recuadro);
+
+        string nombreHabito = Corazon.getNombreHabito(i);  // ✅ Obtener el nombre correctamente
+
+        if (!nombreHabito.empty()) {  // ✅ Si no hay hábito, mostrar mensaje
+            sf::Text texto("No has creado este hábito", fontPixelBig, 24);
+            texto.setPosition(recuadro.getPosition().x + 10, recuadro.getPosition().y + 40);
+            texto.setFillColor(sf::Color::Red);
+            textosHabitos.push_back(texto);
+        }
+        else {  // ✅ Si no hay hábito, mostrar mensaje
+            sf::Text texto(nombreHabito, fontPixelBig, 24);  // ✅ `nombreHabito` ya es un string
+            texto.setPosition(recuadro.getPosition().x + 10, recuadro.getPosition().y + 40);
+            texto.setFillColor(sf::Color::Black);
+            textosHabitos.push_back(texto);
+            
+        }
+    }
 }
 
 
@@ -418,7 +599,6 @@ void drawInicio(sf::RenderWindow& window) {// Dibuja pantalla de inicio
     window.draw(botonCorrecto_HB);
     window.draw(botonSalir);
     window.draw(botonSalir_HB);
-
 }
 
 void drawMenu0(sf::RenderWindow& window) { //Dibuja Corazon y el fondo
@@ -444,6 +624,8 @@ void drawMenu1(sf::RenderWindow& window) { //Dibuja Menu principal
     window.draw(barraProgreso);
     window.draw(s_botonEditarHabito);
     window.draw(botonEditarHabito);
+    window.draw(HabitosTexto);
+    window.draw(MetasTexto);
 }
 
 void drawMenuCalendario(sf::RenderWindow& window) {//Dibuja Menu calendario
@@ -476,8 +658,37 @@ void drawMenuEditarHabito(sf::RenderWindow& window) {
     window.draw(botonBorrarHabito);
     window.draw(s_botonSalir_HB);
     window.draw(botonSalir);
+    window.draw(TextAgregarHabito);
+    window.draw(TextBorrarHabito);
 }
 
+void drawMenuEditarMeta(sf::RenderWindow& window) {
+    window.draw(background);
+    window.draw(s_botonAgregarMeta);
+    window.draw(botonAgregarMeta);
+    window.draw(s_botonAumentarMeta);
+    window.draw(botonAumentarMeta);
+    window.draw(s_botonSalir_HB);
+    window.draw(botonSalir);
+    window.draw(TextAumentarMeta);
+    window.draw(TextAgregarMeta);
+}
+
+void dramMenuAgregarHabito(sf::RenderWindow& window) {
+    window.draw(background);
+    window.draw(botonInputHabito);
+    window.draw(IngresarHabito);
+    window.draw(InputIngresarHabito);
+    window.draw(botonCorrecto);
+}
+
+void drawMenuHabitos(sf::RenderWindow& window) {
+    for (size_t i = 0; i < recuadrosHabitos.size(); i++) {
+        window.draw(recuadrosHabitos[i]);  // Dibuja el rectángulo
+        window.draw(textosHabitos[i]);  // Dibuja el texto dentro del rectángulo
+    }
+
+}
 
 
 // Verificar si el mouse está sobre un botón
@@ -512,6 +723,9 @@ void handleMouseClick(const sf::RenderWindow& window) {
         }
         else if (isMouseOver(botonHabito, mousePos)) {
             std::cout << "Boton Habito" << std::endl;
+            menuAbierto = 7;
+            initMenuHabitos();
+
         }
         else if (isMouseOver(nombreCorazon_HB, mousePos)) {
             std::cout << "Boton EditarNombre" << std::endl;
@@ -525,6 +739,12 @@ void handleMouseClick(const sf::RenderWindow& window) {
         }
         else if (isMouseOver(botonEditarMeta, mousePos)) {
             std::cout << "Boton EditarMeta" << std::endl;
+            menuAbierto = 5;
+            initMenuEditarMeta();
+        }
+        else if (isMouseOver(botonEditarMeta, mousePos)) {
+            std::cout << "Boton EditarMeta" << std::endl;
+
         }
         break;
     case 2:
@@ -555,14 +775,33 @@ void handleMouseClick(const sf::RenderWindow& window) {
             std::cout << "Boton Salir" << std::endl;
             menuAbierto = 1;
             initMenu1();
+            typingActive = false;
         }
         else if (isMouseOver(botonAgregarHabito, mousePos)) {
             std::cout << "Boton AgregarHabito" << std::endl;
+            typingActive = true;
+            menuAbierto = 6;
+            initMenuAgregarHabito();
+            
         }
         else if (isMouseOver(botonBorrarHabito, mousePos)) {
             std::cout << "Boton BorrarHabito" << std::endl;
         }
+        break;
+    case 5:
+        if (isMouseOver(botonSalir_HB, mousePos)) {
+            std::cout << "Boton Salir" << std::endl;
+            menuAbierto = 1;
+            initMenu1();
+            typingActive = false;
+        }
+        break;
+
+
+
     }
+    
+    
 }
 
 void inputTeclado(sf::RenderWindow& window, sf::Event& event, sf::Text& text) { //window, event, texto
@@ -600,6 +839,10 @@ void inputTeclado(sf::RenderWindow& window, sf::Event& event, sf::Text& text) { 
 int main() {
     sf::RenderWindow window(sf::VideoMode(700, 900), "Proyecto Final Parcial 2");
 
+    bool escribiendoHabito = true; 
+    bool habitoCreado = false;
+
+
     initFonts();
     initBotonCorrecto();
     initBotonSalir();
@@ -609,6 +852,9 @@ int main() {
     initMenuCalendario();
     initInicio();
     initMenuEditarHabito();
+    initMenuEditarMeta();
+    initMenuAgregarHabito();
+    initMenuHabitos();
 
     while (window.isOpen()) {
 
@@ -648,7 +894,49 @@ int main() {
             drawMenu0(window);
             drawMenu1(window);
             drawMenuEditarHabito(window);
+            break;
+        case 5:
+            drawMenu0(window);
+            drawMenu1(window);
+            drawMenuEditarMeta(window);
+            break;
+        case 6:
+            escribiendoHabito = true;
+            habitoCreado = false;
+            drawMenu0(window);
+            drawMenu1(window);
+            dramMenuAgregarHabito(window);
+            inputTeclado(window, event, InputIngresarHabito);
+
+            inputTeclado(window, event, InputIngresarHabito);
+
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+
+                if (isMouseOver(s_botonCorrecto_HB, mousePos) && !habitoCreado) {
+                    string habitoString = InputIngresarHabito.getString();
+
+                    if (!habitoString.empty()) {
+                        Corazon.crearHabito(habitoString);
+                        habitoCreado = true;
+                        escribiendoHabito = false;
+                        menuAbierto = 1;
+                        cout << "Habito Creado" << endl;
+                    }
+                    else {
+                        std::cout << "Error: No se ingresó texto!" << std::endl;
+                    }
+                }
+            }
+            break;
+
+        case 7:
+            drawMenu0(window);
+            drawMenu1(window);
+            drawMenuHabitos(window);
         }
+       
+       
         window.display();
     }
     std::string input = inputTextInicio.getString();
