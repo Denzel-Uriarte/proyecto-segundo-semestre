@@ -1,7 +1,7 @@
 #pragma once
 #pragma once
-#ifndef EMOCION_H
-#define EMOCION_H
+#ifndef CORAZONCITO_H
+#define CORAZONCITO_H
 
 #include <string>
 #include <vector>
@@ -112,35 +112,25 @@ public:
 class Habito {
 private:
     string nombre;
-    string descripcionHabito;
 public:
-    Habito(string nombre, string descripcionHabito);
+    Habito(string nombre);
 
     void setNombre(const string& nuevoNombre);
     string getNombre() const;
 
-    void setDescripcion(const string& nuevaDescripcion);
-    string getDescripcion() const;
 };
 
 class Corazoncito {
 private:
-    int edad;
-    string sexo, color;
-    double peso, altura;
     Emocion emocionDeCora;
     unique_ptr<Habito> habitosCreados[3];
     unique_ptr<Meta> MetasCreadas;
     static int habitosGuardados;
 
 public:
-    Corazoncito(int edad, string sexo, double peso, double altura, Emocion emocionDeCora);
+    Corazoncito(Emocion emocionDeCora);
 
-    void setEdad(int& edad);
-    void setSexo(const string& sexo);
-    void setColor(const string& color);
-    void setPeso(double& peso);
-    void setAltura(double& altura);
+
     void setEmocion(const Emocion& emocion);
 
     int getEdad() const;
@@ -153,10 +143,11 @@ public:
     void evaluarEstado() const;
 
     // Manejo de Habitos
-    void crearHabito();
+    void crearHabito(string habitoTemp);
     void borrarHabito(int indice);
     void ImprimirHabitos();
     void revisarHabitosHechos();
+    string getNombreHabito(int i);
 
     // Manejo de Metas
     void crearMeta();
