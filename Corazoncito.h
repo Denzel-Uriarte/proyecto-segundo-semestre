@@ -81,7 +81,7 @@ public:
 
     int marcarMeta();
 
-    void aumentarProgreso();
+    void aumentarProgreso(double progreso);
 
     void calcularPorcentajeMeta() const;
 };
@@ -94,19 +94,19 @@ public:
     Consecuencia();
     virtual ~Consecuencia();
 
-    virtual void mostrarFrase(const Emocion& emocion);
+    virtual string mostrarFrase(const Emocion& emocion);
 };
 
 class ConsecuenciaPositiva : public Consecuencia {
 public:
     ConsecuenciaPositiva();
-    void mostrarFrase(const Emocion& emocion) override;
+    string mostrarFrase(const Emocion& emocion) override;
 };
 
 class ConsecuenciaNegativa : public Consecuencia {
 public:
     ConsecuenciaNegativa();
-    void mostrarFrase(const Emocion& emocion) override;
+    string mostrarFrase(const Emocion& emocion) override;
 };
 
 class Habito {
@@ -126,6 +126,7 @@ private:
     unique_ptr<Habito> habitosCreados[3];
     unique_ptr<Meta> MetasCreadas;
     static int habitosGuardados;
+    bool metaExisten;
 
 public:
     Corazoncito(Emocion emocionDeCora);
@@ -139,8 +140,13 @@ public:
     double getPeso() const;
     double getAltura() const;
     Emocion getEmocion() const;
+    int getEstres();
+    int getAnimo();
+    bool getMetaExisten();
+    string getNombreMeta();
 
-    void evaluarEstado() const;
+
+    string evaluarEstado() const;
 
     // Manejo de Habitos
     void crearHabito(string habitoTemp);
@@ -150,9 +156,9 @@ public:
     string getNombreHabito(int i);
 
     // Manejo de Metas
-    void crearMeta();
+    void crearMeta(string meta, double cantidad);
     void revisarMeta();
-    void aumentarProgreso();
+    void aumentarProgreso(double progreso);
 };
 
 #endif // EMOCION_H
