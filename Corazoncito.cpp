@@ -1,4 +1,4 @@
-﻿// Proyecto de segundo semestre
+// Proyecto de segundo semestre
 // Programación orientada a objetos
 // Denzel Isaac Uriarte Munoz - 34684
 // Carlos Andres Salazar - 34539
@@ -94,10 +94,8 @@ double Meta::getCantidadMeta() const { return cantidadMeta; }
 double Meta::getProgresoMeta() const { return progresoMeta; }
 bool Meta::getMetaCumplida() const { return metaCumplida; }
 
-void Meta::aumentarProgreso() {
-    double temp;
-    cin >> temp;
-    progresoMeta += temp;
+void Meta::aumentarProgreso(double progreso) {
+    progresoMeta += progreso;
 }
 
 int Meta::marcarMeta() {  // ✅ Implementation in `Meta.cpp`
@@ -124,9 +122,10 @@ void Meta::calcularPorcentajeMeta() const {
 Consecuencia::Consecuencia() {}
 Consecuencia::~Consecuencia() {}
 
-void Consecuencia::mostrarFrase(const Emocion& emocion) {
+string Consecuencia::mostrarFrase(const Emocion& emocion) {
     int estres = emocion.getNivelEstres();
     int animo = emocion.getNivelAnimo();
+    return " ";
 }
 
 
@@ -134,9 +133,9 @@ ConsecuenciaPositiva::ConsecuenciaPositiva() {
     frases = { "Estoy feliz!", "Me siento genial!", "Boom boom pow!" };
 }
 
-void ConsecuenciaPositiva::mostrarFrase(const Emocion& emocion) {
+string ConsecuenciaPositiva::mostrarFrase(const Emocion& emocion) {
     int indiceDeFrases = rand() % frases.size();
-    cout << frases[indiceDeFrases] << endl;
+    return frases[indiceDeFrases];
 }
 
 
@@ -144,9 +143,9 @@ ConsecuenciaNegativa::ConsecuenciaNegativa() {
     frases = { "Estoy triste...", "Me siento debil...", "Por favor... ya no mas..." };
 }
 
-void ConsecuenciaNegativa::mostrarFrase(const Emocion& emocion) {
+string ConsecuenciaNegativa::mostrarFrase(const Emocion& emocion) {
     int indiceDeFrases = rand() % frases.size();
-    cout << frases[indiceDeFrases] << endl;
+    return frases[indiceDeFrases];
 }
 
 
@@ -162,7 +161,7 @@ string Habito::getNombre() const {
 
 
 
-Corazoncito::Corazoncito(Emocion emocionDeCora) : emocionDeCora(emocionDeCora) {}
+Corazoncito::Corazoncito(Emocion emocionDeCora) : emocionDeCora(emocionDeCora), metaExisten(0) {}
 
 void Corazoncito::setEmocion(const Emocion& emocion) {
     emocionDeCora = emocion;
@@ -172,9 +171,23 @@ Emocion Corazoncito::getEmocion() const {
     return emocionDeCora;
 }
 
-void Corazoncito::evaluarEstado() const {
+int Corazoncito::getEstres() {
+    return emocionDeCora.getNivelEstres();
+}
+
+int Corazoncito::getAnimo() {
+    return emocionDeCora.getNivelAnimo();
+}
+
+bool Corazoncito::getMetaExisten() {
+    return metaExisten;
+}
+
+
+string Corazoncito::evaluarEstado() const {
     int estres = emocionDeCora.getNivelEstres();
     int animo = emocionDeCora.getNivelAnimo();
+
 
     Consecuencia* consecuencia = nullptr;
 
@@ -185,7 +198,9 @@ void Corazoncito::evaluarEstado() const {
         consecuencia = new ConsecuenciaPositiva();
     }
 
-    consecuencia->mostrarFrase(emocionDeCora);
+    return consecuencia->mostrarFrase(emocionDeCora);
+
+
     delete consecuencia;
 }
 
@@ -221,7 +236,7 @@ string Corazoncito::getNombreHabito(int i) {
     if (i >= 0 && i < 3 && habitosCreados[i]) {
         return habitosCreados[i]->getNombre();
     }
-    return "";
+    return " ";
 }
 
 void Corazoncito::revisarHabitosHechos() {
@@ -255,16 +270,10 @@ void Corazoncito::revisarHabitosHechos() {
     evaluarEstado();
 }
 
-void Corazoncito::crearMeta() {
-    string meta;
-    double cantidad;
-
-
-    cout << "Cuanto deseas realizar de la meta?" << endl;
-    cin >> cantidad;
+void Corazoncito::crearMeta(string meta, double cantidad) {
 
     MetasCreadas = std::make_unique<Meta>(meta, cantidad);
-
+    metaExisten = 1;
 
 }
 
@@ -275,9 +284,18 @@ void Corazoncito::revisarMeta() {
     }
 }
 
-void Corazoncito::aumentarProgreso() {
-    MetasCreadas->aumentarProgreso();
+void Corazoncito::aumentarProgreso(double progreso) {
+    int i;
+    MetasCreadas->aumentarProgreso(progreso);
+    i = MetasCreadas->marcarMeta();
+
+    metaExisten = 0;
+
 }
+string Corazoncito::getNombreMeta() {
+   return MetasCreadas->getTipoMeta();
+}
+
 
 
 int Corazoncito::habitosGuardados = 0;
