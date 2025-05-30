@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "C:\\Users\\Denze\\OneDrive\\Documents\\code-folder\\education\\uni-segundo-semestre\\proyecto-segundo-semestre\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{2D172B33-A743-4700-810A-42AC16C94795}|proyecto-segundo-semestre.vcxproj|C:\\Users\\Denze\\OneDrive\\Documents\\code-folder\\education\\uni-segundo-semestre\\proyecto-segundo-semestre\\source.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{2D172B33-A743-4700-810A-42AC16C94795}|proyecto-segundo-semestre.vcxproj|solutionrelative:source.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{2D172B33-A743-4700-810A-42AC16C94795}|proyecto-segundo-semestre.vcxproj|C:\\Users\\Denze\\OneDrive\\Documents\\code-folder\\education\\uni-segundo-semestre\\proyecto-segundo-semestre\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{2D172B33-A743-4700-810A-42AC16C94795}|proyecto-segundo-semestre.vcxproj|solutionrelative:main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2D172B33-A743-4700-810A-42AC16C94795}|proyecto-segundo-semestre.vcxproj|C:\\Users\\Denze\\OneDrive\\Documents\\code-folder\\education\\uni-segundo-semestre\\proyecto-segundo-semestre\\source.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2D172B33-A743-4700-810A-42AC16C94795}|proyecto-segundo-semestre.vcxproj|solutionrelative:source.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{2D172B33-A743-4700-810A-42AC16C94795}|proyecto-segundo-semestre.vcxproj|C:\\Users\\Denze\\OneDrive\\Documents\\code-folder\\education\\uni-segundo-semestre\\proyecto-segundo-semestre\\source.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -22,17 +22,17 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "main.cpp",
               "DocumentMoniker": "C:\\Users\\Denze\\OneDrive\\Documents\\code-folder\\education\\uni-segundo-semestre\\proyecto-segundo-semestre\\main.cpp",
               "RelativeDocumentMoniker": "main.cpp",
               "ToolTip": "C:\\Users\\Denze\\OneDrive\\Documents\\code-folder\\education\\uni-segundo-semestre\\proyecto-segundo-semestre\\main.cpp",
               "RelativeToolTip": "main.cpp",
-              "ViewState": "AgIAABwEAAAAAAAAAAAQwFIDAAA1AAAAAAAAAA==",
+              "ViewState": "AgIAABIAAAAAAAAAAAAAACEAAAAYAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-05-29T11:32:17.971Z",
               "EditorCaption": ""
@@ -45,20 +45,20 @@
               "RelativeDocumentMoniker": "source.h",
               "ToolTip": "C:\\Users\\Denze\\OneDrive\\Documents\\code-folder\\education\\uni-segundo-semestre\\proyecto-segundo-semestre\\source.h",
               "RelativeToolTip": "source.h",
-              "ViewState": "AgIAAH4AAAAAAAAAAAAiwJEAAAAgAAAAAAAAAA==",
+              "ViewState": "AgIAAIoAAAAAAAAAAAAiwJgAAAAOAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2025-05-29T05:07:50.497Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "source.cpp",
               "DocumentMoniker": "C:\\Users\\Denze\\OneDrive\\Documents\\code-folder\\education\\uni-segundo-semestre\\proyecto-segundo-semestre\\source.cpp",
               "RelativeDocumentMoniker": "source.cpp",
-              "ToolTip": "C:\\Users\\Denze\\OneDrive\\Documents\\code-folder\\education\\uni-segundo-semestre\\proyecto-segundo-semestre\\source.cpp*",
-              "RelativeToolTip": "source.cpp*",
-              "ViewState": "AgIAAFQAAAAAAAAAAAAiwGUAAAAAAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\Denze\\OneDrive\\Documents\\code-folder\\education\\uni-segundo-semestre\\proyecto-segundo-semestre\\source.cpp",
+              "RelativeToolTip": "source.cpp",
+              "ViewState": "AgIAAAQBAAAAAAAAAAAiwBQBAAAnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-05-29T05:06:51.521Z",
               "EditorCaption": ""

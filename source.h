@@ -1,6 +1,8 @@
+
 #pragma once
-#ifndef CORAZONCITO_H
-#define CORAZONCITO_H
+#pragma once
+#ifndef SOURCE_H
+#define SOURCE_H
 
 #include <string>
 #include <vector>
@@ -80,7 +82,7 @@ public:
 
     int marcarMeta();
 
-    void aumentarProgreso();
+    void aumentarProgreso(int progreso);
 
     void calcularPorcentajeMeta() const;
 };
@@ -93,19 +95,19 @@ public:
     Consecuencia();
     virtual ~Consecuencia();
 
-    virtual void mostrarFrase(const Emocion& emocion);
+    virtual string mostrarFrase(const Emocion& emocion);
 };
 
 class ConsecuenciaPositiva : public Consecuencia {
 public:
     ConsecuenciaPositiva();
-    void mostrarFrase(const Emocion& emocion) override;
+    string mostrarFrase(const Emocion& emocion) override;
 };
 
 class ConsecuenciaNegativa : public Consecuencia {
 public:
     ConsecuenciaNegativa();
-    void mostrarFrase(const Emocion& emocion) override;
+    string mostrarFrase(const Emocion& emocion) override;
 };
 
 class Habito {
@@ -116,6 +118,7 @@ public:
 
     void setNombre(const string& nuevoNombre);
     string getNombre() const;
+
 };
 
 class Corazoncito {
@@ -124,6 +127,7 @@ private:
     unique_ptr<Habito> habitosCreados[3];
     unique_ptr<Meta> MetasCreadas;
     static int habitosGuardados;
+    bool metaExisten;
 
 public:
     Corazoncito(Emocion emocionDeCora);
@@ -131,9 +135,19 @@ public:
 
     void setEmocion(const Emocion& emocion);
 
+    int getEdad() const;
+    string getSexo() const;
+    string getColor() const;
+    double getPeso() const;
+    double getAltura() const;
     Emocion getEmocion() const;
+    int getEstres();
+    int getAnimo();
+    bool getMetaExisten();
+    string getNombreMeta();
 
-    void evaluarEstado() const;
+
+    string evaluarEstado() const;
 
     // Manejo de Habitos
     void crearHabito(string habitoTemp);
@@ -145,12 +159,7 @@ public:
     // Manejo de Metas
     void crearMeta(string meta, double cantidad);
     void revisarMeta();
-    void aumentarProgreso();
-
-    // Getters
-    Meta* getMeta() const {
-        return MetasCreadas ? MetasCreadas.get() : nullptr;
-    }
+    void aumentarProgreso(int progreso);
 };
 
 #endif // EMOCION_H

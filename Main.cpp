@@ -1,6 +1,6 @@
 ﻿#include <SFML/Graphics.hpp>
 #include <iostream>
-#include "source.h" 
+#include "Source.h" 
 #include <string>
 #include <fstream>
 #include <tuple>
@@ -14,6 +14,7 @@
 int menuAbierto = 0;
 sf::Clock typeDelay;          // Reloj para controlar el tiempo entre letras
 sf::Time typingDelay = sf::milliseconds(200);  // Delay entre letras (100ms)
+bool metaCreada = 0;
 
 float posTextoCorrectX = 15;
 float posTextoCorrectY = -5;
@@ -30,13 +31,12 @@ sf::Clock cursorClock;
 bool cursorVisible = true;
 sf::Time cursorBlinkInterval = sf::milliseconds(500);
 
-Emocion emocionCora;
+Emocion emocionCora(0, 10);
 
 Corazoncito Corazon(emocionCora);
 
-// Variables para el menu de crear meta, utilizadas para poder seleccionar entre el campo de meta y el campo de cantidad
-enum CampoMetaActivo { NINGUNO, META, CANTIDAD };
-CampoMetaActivo campoMetaActivo = NINGUNO;
+
+
 
 // Inicializar botones
 sf::RectangleShape botonAgregarHabito;
@@ -61,6 +61,22 @@ sf::RectangleShape s_botonSalir_HB;
 sf::Texture botonSalirTex;
 sf::Sprite botonSalir;
 
+sf::RectangleShape botonSalir_HB_1;
+sf::RectangleShape s_botonSalir_HB_1;
+sf::Texture botonSalirTex_1;
+sf::Sprite botonSalir_1;
+
+sf::RectangleShape botonSalir_HB_2;
+sf::RectangleShape s_botonSalir_HB_2;
+sf::Texture botonSalirTex_2;
+sf::Sprite botonSalir_2;
+
+sf::RectangleShape botonSalir_HB_3;
+sf::RectangleShape s_botonSalir_HB_3;
+sf::Texture botonSalirTex_3;
+sf::Sprite botonSalir_3;
+
+
 sf::Font fontArial;
 sf::Font fontPixelBig;
 sf::Font fontPixelSlim;
@@ -74,13 +90,6 @@ sf::Text inputTextInicio; //Insertar Texto Inicio
 sf::Texture corazonTxt;
 sf::Sprite corazon;
 
-// para el calendario
-sf::Sprite botonCorrectoGrande;
-sf::RectangleShape botonCorrectoGrande_HB;
-sf::Text textoProgresoAumentado;
-bool mostrarMensajeProgreso = false;
-
-sf::Text MetaCalendarioTexto;
 sf::RectangleShape s_botonCalendario;
 sf::RectangleShape botonCalendario;
 sf::Texture calendarioIconTxt;
@@ -94,10 +103,10 @@ sf::RectangleShape s_botonEditarHabito;
 
 
 
-sf::RectangleShape s_botonMeta;
-sf::RectangleShape botonMeta;
-sf::Texture metaIconTxt;
-sf::Sprite metaIcon;
+sf::RectangleShape s_botonHabito;
+sf::RectangleShape botonHabito;
+sf::Texture habitoIconTxt;
+sf::Sprite habitoIcon;
 
 sf::RectangleShape barraProgreso;
 sf::RectangleShape s_barraProgreso;
@@ -119,6 +128,7 @@ sf::Text inputTextEditarNombre;
 sf::Text HabitosTexto;
 sf::Text MetasTexto;
 sf::Text MetaTexto;
+sf::Text nombreMeta;
 
 sf::RectangleShape agregarHabito;
 
@@ -143,6 +153,7 @@ sf::Text InputIngresarMetaCantidad;
 sf::RectangleShape botonInputMetaCantidad;
 
 sf::CircleShape bubble;
+sf::Text animoCorazoncito;
 
 
 
@@ -150,6 +161,11 @@ vector<sf::RectangleShape> recuadrosHabitos;
 vector<sf::Text> textosHabitos;
 
 
+sf::Text aumentarMeta;
+sf::RectangleShape CuadroAumentarMeta;
+sf::Text metaAumentada;
+
+std::string nombreMetaTemporal;
 
 //Funciones inicializar 
 void initFonts() {
@@ -199,6 +215,11 @@ void initBotonSalir() {
     s_botonSalir_HB.setOutlineThickness(0);
     s_botonSalir_HB.setOutlineColor(sf::Color(0, 25, 50, 80));
     s_botonSalir_HB.setFillColor(sf::Color(0, 25, 50, 80));
+
+
+
+
+
 }
 
 void initInicio() {
@@ -242,10 +263,24 @@ void initInicio() {
 }
 
 void initMenu0() {
-    if (!corazonTxt.loadFromFile("Textures/CorazonSano.png"))
-        std::cout << "Could not load CorazonSano.png\n";
-    corazon.setTexture(corazonTxt);
-    corazon.setScale(sf::Vector2f(10, 10));
+
+    int estres = Corazon.getEstres();
+    int animo = Corazon.getAnimo();
+
+
+    if (estres > 6 && animo < 6 || estres > 6 && animo > 6) {
+        if (!corazonTxt.loadFromFile("Textures/CorazonEnfermo.png"))
+            std::cout << "Could not load CorazonSano.png\n";
+        corazon.setTexture(corazonTxt);
+        corazon.setScale(sf::Vector2f(10, 10));
+    }
+    else {
+        if (!corazonTxt.loadFromFile("Textures/CorazonSano.png"))
+            std::cout << "Could not load CorazonSano.png\n";
+        corazon.setTexture(corazonTxt);
+        corazon.setScale(sf::Vector2f(10, 10));
+    }
+
 
     backgroundMargin.setOutlineThickness(20);
     backgroundMargin.setOutlineColor(sf::Color(120, 170, 190));
@@ -343,18 +378,24 @@ void initMenu1() {
     MetasTexto.setPosition(130, 700);
 
     MetaTexto.setFont(fontPixelBig);
-    Meta* meta = Corazon.getMeta();
-    if (meta && !meta->getTipoMeta().empty()) {
-        std::string metaADesplegar = "Meta: " + meta->getTipoMeta() +
-            " (" + std::to_string(static_cast<int>(std::round(meta->getProgresoMeta()))) + "%)"; // redondeamos el valor de la meta, ya que es un double
-        MetaTexto.setString(metaADesplegar);
-    }
-    else {
-        MetaTexto.setString("Meta: ");
-    }
+    MetaTexto.setString("Meta: ");
     MetaTexto.setCharacterSize(50);
     MetaTexto.setFillColor(sf::Color(50, 50, 50));
     MetaTexto.setPosition(90, 800);
+
+    nombreMeta.setFont(fontPixelBig);
+    if (Corazon.getMetaExisten() == 1) {
+        nombreMeta.setString(Corazon.getNombreMeta());
+        cout << "Se debio imprimir una meta: " << Corazon.getNombreMeta();
+    }
+    else {
+        nombreMeta.setString("No hay una meta Creada");
+    }
+    nombreMeta.setCharacterSize(30);
+    nombreMeta.setFillColor(sf::Color(50, 50, 50));
+    nombreMeta.setPosition(220, 810);
+
+
 
 
     bubble.setFillColor(sf::Color(255, 255, 255));
@@ -363,24 +404,30 @@ void initMenu1() {
     bubble.setPosition(370, 250);
     bubble.setRadius(150);
 
+    animoCorazoncito.setFont(fontPixelBig);
+    animoCorazoncito.setString(Corazon.evaluarEstado());
+    animoCorazoncito.setCharacterSize(35);
+    animoCorazoncito.setFillColor(sf::Color(50, 50, 50));
+    animoCorazoncito.setPosition(400, 350);
 
-    if (!metaIconTxt.loadFromFile("Textures/metaIcon.png"))
-        std::cout << "Could not load metaIcon.png\n";
-    metaIcon.setTexture(metaIconTxt);
-    metaIcon.setScale(sf::Vector2f(7, 7));
-    metaIcon.setPosition(530, 60);
 
-    botonMeta.setSize(sf::Vector2f(125, 125));
-    botonMeta.setOutlineThickness(7);
-    botonMeta.setOutlineColor(sf::Color(230, 190, 140));
-    botonMeta.setPosition(525, 50);
-    botonMeta.setFillColor(sf::Color(235, 240, 170));
+    if (!habitoIconTxt.loadFromFile("Textures/HabitoIcon.png"))
+        std::cout << "Could not load HabitoIcon.png\n";
+    habitoIcon.setTexture(habitoIconTxt);
+    habitoIcon.setScale(sf::Vector2f(7, 7));
+    habitoIcon.setPosition(530, 60);
 
-    s_botonMeta.setSize(sf::Vector2f(125, 125));
-    s_botonMeta.setOutlineThickness(7);
-    s_botonMeta.setOutlineColor(sf::Color(0, 25, 50, 80));
-    s_botonMeta.setPosition(525 + 5, 50 + 5);
-    s_botonMeta.setFillColor(sf::Color(0, 25, 50, 80));
+    botonHabito.setSize(sf::Vector2f(125, 125));
+    botonHabito.setOutlineThickness(7);
+    botonHabito.setOutlineColor(sf::Color(230, 190, 140));
+    botonHabito.setPosition(525, 50);
+    botonHabito.setFillColor(sf::Color(235, 240, 170));
+
+    s_botonHabito.setSize(sf::Vector2f(125, 125));
+    s_botonHabito.setOutlineThickness(7);
+    s_botonHabito.setOutlineColor(sf::Color(0, 25, 50, 80));
+    s_botonHabito.setPosition(525 + 5, 50 + 5);
+    s_botonHabito.setFillColor(sf::Color(0, 25, 50, 80));
 }
 
 void initMenuCalendario() {
@@ -425,43 +472,6 @@ void initMenuCalendario() {
     botonSalir.setPosition(495, 770);
     botonSalir_HB.setPosition(495 + 5, 770 + 5);
     s_botonSalir_HB.setPosition(495 + 5, 770 + 5);
-
-    Meta* meta = Corazon.getMeta();
-    // Dependiendo en si tenemos una meta o no, deplegamos cosas diferentes en el calendario.
-    if (meta && !meta->getTipoMeta().empty()) {
-        std::string metaCalendarioStr = "Meta: " + meta->getTipoMeta() +
-            "  |  Frecuencia: cada " + std::to_string(static_cast<int>(meta->getCantidadMeta())) + " dias";
-        MetaCalendarioTexto.setFont(fontPixelBig);
-        MetaCalendarioTexto.setString(metaCalendarioStr);
-        MetaCalendarioTexto.setCharacterSize(22);
-        MetaCalendarioTexto.setFillColor(sf::Color(50, 50, 50));
-        MetaCalendarioTexto.setPosition(120, 170);
-    }
-    else {
-        MetaCalendarioTexto.setFont(fontPixelBig);
-        MetaCalendarioTexto.setString("Meta: ");
-        MetaCalendarioTexto.setCharacterSize(22);
-        MetaCalendarioTexto.setFillColor(sf::Color(50, 50, 50));
-        MetaCalendarioTexto.setPosition(120, 170);
-    }
-
-    // Botón Correcto Grande
-    botonCorrectoGrande.setTexture(botonCorrectoTex);
-    botonCorrectoGrande.setScale(6.f, 6.f); // Más grande que el normal
-    botonCorrectoGrande.setPosition(290, 500);
-
-    botonCorrectoGrande_HB.setSize(sf::Vector2f(94, 94)); // Área de hitbox, ajusta si es necesario
-    botonCorrectoGrande_HB.setPosition(290, 500);
-    botonCorrectoGrande_HB.setFillColor(sf::Color::Transparent);
-    botonCorrectoGrande_HB.setOutlineThickness(0);
-
-    // Texto de confirmación
-    textoProgresoAumentado.setFont(fontPixelBig);
-    textoProgresoAumentado.setString("Haz avanzado en tu meta!");
-    textoProgresoAumentado.setCharacterSize(28);
-    textoProgresoAumentado.setFillColor(sf::Color(60, 120, 60));
-    textoProgresoAumentado.setPosition(180, 620);
-    mostrarMensajeProgreso = false;
 }
 
 void initMenuEditarNombre() { //Menu 3
@@ -501,38 +511,27 @@ void initMenuEditarHabito() {
     background.setFillColor(sf::Color(0, 25, 50, 120)); // Fondo oscuro transparente
 
     // Tamaño de los botones
-    float buttonWidth = 300;
-    float buttonHeight = 70;
+
     float spacing = 30; // Espacio entre los dos botones horizontales
 
     // Coordenadas para centrar horizontalmente los dos botones
-    float totalWidth = 2 * buttonWidth + spacing;
+    float totalWidth = 2 * 300 + spacing;
     float startX = (700 - totalWidth) / 2.0f;
-    float centerY = 300;  // Altura fija para los botones principales
 
     // Botón Agregar Hábito (izquierdo)
-    botonAgregarHabito.setSize(sf::Vector2f(buttonWidth, buttonHeight));
-    botonAgregarHabito.setPosition(startX, centerY + 100);
+    botonAgregarHabito.setSize(sf::Vector2f(650, 70));
+    botonAgregarHabito.setPosition(startX, 400);
     botonAgregarHabito.setFillColor(sf::Color(235, 240, 170));
     botonAgregarHabito.setOutlineThickness(5);
     botonAgregarHabito.setOutlineColor(sf::Color(230, 190, 140));
 
-    s_botonAgregarHabito.setSize(sf::Vector2f(buttonWidth, buttonHeight));
-    s_botonAgregarHabito.setPosition(startX + 5, centerY + 105);
+    s_botonAgregarHabito.setSize(sf::Vector2f(300, 70));
+    s_botonAgregarHabito.setPosition(startX + 5, 405);
     s_botonAgregarHabito.setFillColor(sf::Color(0, 25, 50, 80));
 
     // Botón Aumentar Hábito (derecho)
-    float secondButtonX = startX + buttonWidth + spacing;
+    float secondButtonX = startX + 300 + spacing;
 
-    botonBorrarHabito.setSize(sf::Vector2f(buttonWidth, buttonHeight));
-    botonBorrarHabito.setPosition(secondButtonX, centerY + 100);
-    botonBorrarHabito.setFillColor(sf::Color(235, 240, 170));
-    botonBorrarHabito.setOutlineThickness(5);
-    botonBorrarHabito.setOutlineColor(sf::Color(230, 190, 140));
-
-    s_botonBorrarHabito.setSize(sf::Vector2f(buttonWidth, buttonHeight));
-    s_botonBorrarHabito.setPosition(secondButtonX + 5, centerY + 105);
-    s_botonBorrarHabito.setFillColor(sf::Color(0, 25, 50, 80));
 
     // Botón Salir en la posición fija especificada
     botonSalir.setPosition(420, 485);
@@ -543,15 +542,10 @@ void initMenuEditarHabito() {
 
     TextAgregarHabito.setFont(fontPixelBig);
     TextAgregarHabito.setString("Agregar Habito");
-    TextAgregarHabito.setCharacterSize(24);
+    TextAgregarHabito.setCharacterSize(28);
     TextAgregarHabito.setFillColor(sf::Color(50, 50, 50));
-    TextAgregarHabito.setPosition(startX + 5, centerY + 105);
+    TextAgregarHabito.setPosition(280, 415);
 
-    TextBorrarHabito.setFont(fontPixelBig);
-    TextBorrarHabito.setString("Borrar Habito");
-    TextBorrarHabito.setCharacterSize(24);
-    TextBorrarHabito.setFillColor(sf::Color(50, 50, 50));
-    TextBorrarHabito.setPosition(secondButtonX, centerY + 100);
 }
 
 void initMenuEditarMeta() {
@@ -616,7 +610,7 @@ void initMenuAgregarHabito() {
     IngresarHabito.setFont(fontPixelBig);
     IngresarHabito.setString("Ingrese el nombre del habito:");
     IngresarHabito.setCharacterSize(30);
-    IngresarHabito.setFillColor(sf::Color(50, 50, 50));
+    IngresarHabito.setFillColor(sf::Color(255, 255, 255));
     IngresarHabito.setPosition(210, 345);
 
     InputIngresarHabito.setFont(fontPixelSlim);
@@ -642,30 +636,22 @@ void initMenuAgregarHabito() {
     s_botonCorrecto_HB.setOutlineThickness(0);
     s_botonCorrecto_HB.setOutlineColor(sf::Color(0, 25, 50, 80));
     s_botonCorrecto_HB.setFillColor(sf::Color(0, 25, 50, 80));
+
+
 }
+
 
 void initMenuAgregarMeta() {
     IngresarMeta.setFont(fontPixelBig);
     IngresarMeta.setString("Ingrese tu meta de la semana:");
     IngresarMeta.setCharacterSize(30);
-    IngresarMeta.setFillColor(sf::Color(50, 50, 50));
+    IngresarMeta.setFillColor(sf::Color(255, 255, 255));
     IngresarMeta.setPosition(210, 345);
-
-    IngresarCantidad.setFont(fontPixelBig);
-    IngresarCantidad.setString("Ingresa la frecuencia: ");
-    IngresarCantidad.setCharacterSize(30);
-    IngresarCantidad.setFillColor(sf::Color(50, 50, 50));
-    IngresarCantidad.setPosition(210, 545);
 
     InputIngresarMeta.setFont(fontPixelSlim);
     InputIngresarMeta.setCharacterSize(30);
     InputIngresarMeta.setFillColor(sf::Color(0, 0, 0, 200));
     InputIngresarMeta.setPosition(250, 420);
-
-    InputIngresarMetaCantidad.setFont(fontPixelSlim);
-    InputIngresarMetaCantidad.setCharacterSize(30);
-    InputIngresarMetaCantidad.setFillColor(sf::Color(0, 0, 0, 200));
-    InputIngresarMetaCantidad.setPosition(250, 620);
 
     botonInputMeta.setSize(sf::Vector2f(300, 75));
     botonInputMeta.setOrigin(125, 50);
@@ -674,13 +660,6 @@ void initMenuAgregarMeta() {
     botonInputMeta.setOutlineColor(sf::Color(230, 200, 120));
     botonInputMeta.setFillColor(sf::Color(240, 230, 180));
 
-    botonInputMetaCantidad.setSize(sf::Vector2f(300, 75));
-    botonInputMetaCantidad.setOrigin(125, 50);
-    botonInputMetaCantidad.setPosition(350, 650);
-    botonInputMetaCantidad.setOutlineThickness(5);
-    botonInputMetaCantidad.setOutlineColor(sf::Color(230, 200, 120));
-    botonInputMetaCantidad.setFillColor(sf::Color(240, 230, 180));
-
     botonCorrecto.setTexture(botonCorrectoTex);
     botonCorrecto.setScale(sf::Vector2f(3, 3));
     botonCorrecto_HB.setSize(sf::Vector2f(47, 47));
@@ -688,39 +667,146 @@ void initMenuAgregarMeta() {
     botonCorrecto_HB.setOutlineColor(sf::Color::Transparent);
     botonCorrecto_HB.setFillColor(sf::Color::Transparent);
 
+
     s_botonCorrecto_HB.setSize(sf::Vector2f(47, 47));
     s_botonCorrecto_HB.setOutlineThickness(0);
     s_botonCorrecto_HB.setOutlineColor(sf::Color(0, 25, 50, 80));
     s_botonCorrecto_HB.setFillColor(sf::Color(0, 25, 50, 80));
 }
 
-void initMenuHabitos() {  // Se agrega la fuente como parámetro
+void initMenuMetaCantidad() {
+
+    InputIngresarMeta.setString("");
+
+    InputIngresarMetaCantidad.setFont(fontPixelSlim);
+    InputIngresarMetaCantidad.setCharacterSize(30);
+    InputIngresarMetaCantidad.setFillColor(sf::Color(0, 0, 0, 200));
+    InputIngresarMetaCantidad.setPosition(350, 420);
+
+    IngresarCantidad.setFont(fontPixelBig);
+    IngresarCantidad.setString("Ingrese la cantidad de la meta:");
+    IngresarCantidad.setCharacterSize(30);
+    IngresarCantidad.setFillColor(sf::Color(255, 255, 255));
+    IngresarCantidad.setPosition(180, 345);
+
+    botonInputMeta.setSize(sf::Vector2f(300, 75));
+    botonInputMeta.setOrigin(125, 50);
+    botonInputMeta.setPosition(350, 450);
+    botonInputMeta.setOutlineThickness(5);
+    botonInputMeta.setOutlineColor(sf::Color(230, 200, 120));
+    botonInputMeta.setFillColor(sf::Color(240, 230, 180));
+
+
+}
+
+void initMenuHabitos() {
+
+    background.setSize(sf::Vector2f(700, 900));
+    background.setPosition(0, 0);
+    background.setFillColor(sf::Color(0, 0, 0, 100));
+
+    botonSalir.setPosition(420, 485);
+    botonSalir_HB.setPosition(420, 485);
+    s_botonSalir_HB.setPosition(425, 490);
+
+    botonSalir_1.setTexture(botonSalirTex);
+    botonSalir_1.setScale(sf::Vector2f(3, 3));
+    botonSalir_1.setPosition(580, 160);
+    botonSalir_HB_1.setSize(sf::Vector2f(50, 50));
+    botonSalir_HB_1.setOutlineThickness(1);
+    botonSalir_HB_1.setOutlineColor(sf::Color::Transparent);
+    botonSalir_HB_1.setFillColor(sf::Color::Transparent);
+    botonSalir_HB_1.setPosition(580, 160);
+
+
+    s_botonSalir_HB_1.setSize(sf::Vector2f(47, 47));
+    s_botonSalir_HB_1.setOutlineThickness(0);
+    s_botonSalir_HB_1.setOutlineColor(sf::Color(0, 25, 50, 80));
+    s_botonSalir_HB_1.setFillColor(sf::Color(0, 25, 50, 80));
+    s_botonSalir_HB_1.setPosition(580 + 5, 160 + 5);
+
+    botonSalir_2.setTexture(botonSalirTex);
+    botonSalir_2.setScale(sf::Vector2f(3, 3));
+    botonSalir_2.setPosition(580, 280);
+    botonSalir_HB_2.setSize(sf::Vector2f(50, 50));
+    botonSalir_HB_2.setOutlineThickness(1);
+    botonSalir_HB_2.setOutlineColor(sf::Color::Transparent);
+    botonSalir_HB_2.setFillColor(sf::Color::Transparent);
+    botonSalir_HB_2.setPosition(580, 280);
+
+    s_botonSalir_HB_2.setSize(sf::Vector2f(47, 47));
+    s_botonSalir_HB_2.setOutlineThickness(0);
+    s_botonSalir_HB_2.setOutlineColor(sf::Color(0, 25, 50, 80));
+    s_botonSalir_HB_2.setFillColor(sf::Color(0, 25, 50, 80));
+    s_botonSalir_HB_2.setPosition(580 + 5, 280 + 5);
+
+    botonSalir_3.setTexture(botonSalirTex);
+    botonSalir_3.setScale(sf::Vector2f(3, 3));
+    botonSalir_3.setPosition(580, 400);
+    botonSalir_HB_3.setSize(sf::Vector2f(50, 50));
+    botonSalir_HB_3.setOutlineThickness(1);
+    botonSalir_HB_3.setOutlineColor(sf::Color::Transparent);
+    botonSalir_HB_3.setFillColor(sf::Color::Transparent);
+    botonSalir_HB_3.setPosition(580, 400);
+
+    s_botonSalir_HB_3.setSize(sf::Vector2f(47, 47));
+    s_botonSalir_HB_3.setOutlineThickness(0);
+    s_botonSalir_HB_3.setOutlineColor(sf::Color(0, 25, 50, 80));
+    s_botonSalir_HB_3.setFillColor(sf::Color(0, 25, 50, 80));
+    s_botonSalir_HB_3.setPosition(580 + 5, 400 + 5);;
+
+
+
+
     for (int i = 0; i < 3; i++) {
-        sf::RectangleShape recuadro(sf::Vector2f(200, 100));
-        recuadro.setPosition(100, 150 + (i * 120));
+        sf::RectangleShape recuadro(sf::Vector2f(400, 100));
+        recuadro.setPosition(150, 140 + (i * 120));
         recuadro.setFillColor(sf::Color::White);
         recuadrosHabitos.push_back(recuadro);
 
         string nombreHabito = Corazon.getNombreHabito(i);  // ✅ Obtener el nombre correctamente
 
         if (!nombreHabito.empty()) {  // ✅ Si no hay hábito, mostrar mensaje
-            sf::Text texto("No has creado este hábito", fontPixelBig, 24);
-            texto.setPosition(recuadro.getPosition().x + 10, recuadro.getPosition().y + 40);
-            texto.setFillColor(sf::Color::Red);
-            textosHabitos.push_back(texto);
-        }
-        else {  // ✅ Si no hay hábito, mostrar mensaje
             sf::Text texto(nombreHabito, fontPixelBig, 24);  // ✅ `nombreHabito` ya es un string
             texto.setPosition(recuadro.getPosition().x + 10, recuadro.getPosition().y + 40);
             texto.setFillColor(sf::Color::Black);
+            textosHabitos.push_back(texto);
+        }
+        else {  // ✅ Si no hay hábito, mostrar mensaje
+            sf::Text texto("No has creado este hábito", fontPixelBig, 24);
+            texto.setPosition(recuadro.getPosition().x + 10, recuadro.getPosition().y + 40);
+            texto.setFillColor(sf::Color::Red);
             textosHabitos.push_back(texto);
 
         }
     }
 }
 
+void initMenuAumentarMeta() {
+    InputIngresarMeta.setString("");
+
+    metaAumentada.setFont(fontPixelSlim);
+    metaAumentada.setCharacterSize(30);
+    metaAumentada.setFillColor(sf::Color(0, 0, 0, 200));
+    metaAumentada.setPosition(350, 420);
+
+    aumentarMeta.setFont(fontPixelBig);
+    aumentarMeta.setString("Cuanto Avanzo en la meta:");
+    aumentarMeta.setCharacterSize(30);
+    aumentarMeta.setFillColor(sf::Color(255, 255, 255));
+    aumentarMeta.setPosition(180, 345);
+
+    CuadroAumentarMeta.setSize(sf::Vector2f(300, 75));
+    CuadroAumentarMeta.setOrigin(125, 50);
+    CuadroAumentarMeta.setPosition(350, 450);
+    CuadroAumentarMeta.setOutlineThickness(5);
+    CuadroAumentarMeta.setOutlineColor(sf::Color(230, 200, 120));
+    CuadroAumentarMeta.setFillColor(sf::Color(240, 230, 180));
+}
+
 
 //Funciones Dibujar
+
 void drawInicio(sf::RenderWindow& window) {// Dibuja pantalla de inicio
     window.draw(s_botonCorrecto_HB);
     window.draw(s_botonSalir_HB);
@@ -748,9 +834,9 @@ void drawMenu1(sf::RenderWindow& window) { //Dibuja Menu principal
     window.draw(nombreCorazon);
     window.draw(nombreCorazon_HB);
     window.draw(calendarioIcon);
-    window.draw(s_botonMeta);
-    window.draw(botonMeta);
-    window.draw(metaIcon);
+    window.draw(s_botonHabito);
+    window.draw(botonHabito);
+    window.draw(habitoIcon);
     window.draw(s_botonEditarMeta);
     window.draw(botonEditarMeta);
     window.draw(s_barraProgreso);
@@ -761,6 +847,8 @@ void drawMenu1(sf::RenderWindow& window) { //Dibuja Menu principal
     window.draw(MetasTexto);
     window.draw(MetaTexto);
     window.draw(bubble);
+    window.draw(animoCorazoncito);
+    window.draw(nombreMeta);
 }
 
 void drawMenuCalendario(sf::RenderWindow& window) {//Dibuja Menu calendario
@@ -773,12 +861,6 @@ void drawMenuCalendario(sf::RenderWindow& window) {//Dibuja Menu calendario
     window.draw(s_botonCorrecto_HB);
     window.draw(botonCorrecto);
     window.draw(botonSalir);
-    window.draw(MetaCalendarioTexto);
-    window.draw(botonCorrectoGrande);
-    // condicional donde, si el boton se presiono recientemente, se despliega el mensaje, sino no
-    if (mostrarMensajeProgreso) {
-        window.draw(textoProgresoAumentado);
-    }
 }
 
 void drawMenuEditarNombre(sf::RenderWindow& window) { //Menu editar Nombre
@@ -828,19 +910,52 @@ void drawMenuAgregarMeta(sf::RenderWindow& window) {
     window.draw(botonInputMeta);
     window.draw(IngresarMeta);
     window.draw(InputIngresarMeta);
-    window.draw(botonInputMetaCantidad);
-    window.draw(IngresarCantidad);
-    window.draw(InputIngresarMetaCantidad);
     window.draw(botonCorrecto);
+    window.draw(botonCorrecto_HB);
+
 }
 
+
 void drawMenuHabitos(sf::RenderWindow& window) {
+    window.draw(background);
+    window.draw(botonCorrecto);
+    window.draw(s_botonSalir_HB_1);
+    window.draw(s_botonSalir_HB_2);
+    window.draw(s_botonSalir_HB_3);
+    window.draw(botonSalir_1);
+    window.draw(botonSalir_2);
+    window.draw(botonSalir_3);
+    window.draw(botonSalir_HB_1);
+    window.draw(botonSalir_HB_2);
+    window.draw(botonSalir_HB_3);
     for (size_t i = 0; i < recuadrosHabitos.size(); i++) {
         window.draw(recuadrosHabitos[i]);  // Dibuja el rectángulo
         window.draw(textosHabitos[i]);  // Dibuja el texto dentro del rectángulo
     }
 
+
+
 }
+
+void drawMenuMetaCantidad(sf::RenderWindow& window) {
+    window.draw(background);
+    window.draw(IngresarCantidad);
+    window.draw(botonInputMeta);
+    window.draw(InputIngresarMeta);
+    window.draw(botonCorrecto);
+    window.draw(botonCorrecto_HB);
+
+}
+
+void drawMenuAumentarMeta(sf::RenderWindow& window) {
+    window.draw(background);
+    window.draw(metaAumentada);
+    window.draw(aumentarMeta);
+    window.draw(CuadroAumentarMeta);
+    window.draw(botonCorrecto);
+    window.draw(botonCorrecto_HB);
+}
+
 
 // Verificar si el mouse está sobre un botón
 bool isMouseOver(const sf::RectangleShape& button, sf::Vector2f mousePos) {
@@ -872,11 +987,12 @@ void handleMouseClick(const sf::RenderWindow& window) {
             menuAbierto = 2;
             initMenuCalendario();
         }
-        else if (isMouseOver(botonMeta, mousePos)) {
-            std::cout << "Boton Meta" << std::endl;
-            typingActive = true;
-            menuAbierto = 7;
-            initMenuAgregarMeta();
+        else if (isMouseOver(botonHabito, mousePos)) {
+            std::cout << "Boton Habito" << std::endl;
+            menuAbierto = 8;
+            initMenuHabitos();
+            initBotonSalir();
+
         }
         else if (isMouseOver(nombreCorazon_HB, mousePos)) {
             std::cout << "Boton EditarNombre" << std::endl;
@@ -893,6 +1009,10 @@ void handleMouseClick(const sf::RenderWindow& window) {
             menuAbierto = 5;
             initMenuEditarMeta();
         }
+        else if (isMouseOver(botonEditarMeta, mousePos)) {
+            std::cout << "Boton EditarMeta" << std::endl;
+
+        }
         break;
     case 2:
         if (isMouseOver(botonCorrecto_HB, mousePos)) {
@@ -902,11 +1022,6 @@ void handleMouseClick(const sf::RenderWindow& window) {
             std::cout << "Boton Salir" << std::endl;
             menuAbierto = 1;
             initMenu1();
-            mostrarMensajeProgreso = false; // oculta el mensaje al salir del calendario
-        }
-        if (isMouseOver(botonCorrectoGrande_HB, mousePos)) {
-            Corazon.aumentarProgreso();
-            mostrarMensajeProgreso = true;
         }
         break;
     case 3:
@@ -936,9 +1051,6 @@ void handleMouseClick(const sf::RenderWindow& window) {
             initMenuAgregarHabito();
 
         }
-        else if (isMouseOver(botonBorrarHabito, mousePos)) {
-            std::cout << "Boton BorrarHabito" << std::endl;
-        }
         break;
 
     case 5:
@@ -950,13 +1062,28 @@ void handleMouseClick(const sf::RenderWindow& window) {
         }
         else if (isMouseOver(botonAgregarMeta, mousePos)) {
             std::cout << "Boton AgregarMeta" << std::endl;
-            typingActive = true;
-            menuAbierto = 7;
-            initMenuAgregarMeta();
+            if (Corazon.getMetaExisten() == 1) {
+                cout << "Ya hay una meta, no se puede crear otra" << endl;
+
+            }
+            else {
+                typingActive = true;
+                menuAbierto = 7;
+                initMenuAgregarMeta();
+                sf::sleep(sf::milliseconds(200));
+            }
+
 
         }
         else if (isMouseOver(botonAumentarMeta, mousePos)) {
             std::cout << "Boton Aumentar" << std::endl;
+            if (Corazon.getMetaExisten() == 0) {
+                cout << "No hay meta Creada" << endl;
+            }
+            else {
+                initMenuAumentarMeta();
+                menuAbierto = 10;
+            }
         }
         break;
     case 6:
@@ -968,20 +1095,44 @@ void handleMouseClick(const sf::RenderWindow& window) {
         }
         break;
     case 7:
-        if (isMouseOver(botonInputMeta, mousePos)) {
-            typingActive = true;
-            campoMetaActivo = META;
-            currentInput = InputIngresarMeta.getString();
-        }
-        else if (isMouseOver(botonInputMetaCantidad, mousePos)) {
-            typingActive = true;
-            campoMetaActivo = CANTIDAD;
-            currentInput = InputIngresarMetaCantidad.getString();
-        }
-        else {
+        if (isMouseOver(botonCorrecto_HB, mousePos)) {
+            std::cout << "Boton Salir" << std::endl;
+            nombreMetaTemporal = InputIngresarMeta.getString();
+            menuAbierto = 9;
+            initMenuMetaCantidad();
             typingActive = false;
-            campoMetaActivo = NINGUNO;
         }
+        break;
+    case 8:
+        if (isMouseOver(botonCorrecto_HB, mousePos)) {
+            std::cout << "Boton Salir" << std::endl;
+            menuAbierto = 1;
+            initMenu1();
+        }
+        if (isMouseOver(botonSalir_HB_1, mousePos)) {
+            Corazon.borrarHabito(0);
+        }
+        if (isMouseOver(botonSalir_HB_2, mousePos)) {
+            Corazon.borrarHabito(1);
+        }
+        if (isMouseOver(botonSalir_HB_3, mousePos)) {
+            Corazon.borrarHabito(2);
+        }
+        break;
+    case 9:
+        if (isMouseOver(botonCorrecto_HB, mousePos)) {
+            cout << "Boton Salir" << std::endl;
+            menuAbierto = 1;
+            initMenu1();
+        }
+        break;
+    case 10:
+        if (isMouseOver(botonCorrecto_HB, mousePos)) {
+            cout << "Boton Salir" << std::endl;
+            menuAbierto = 1;
+            initMenu1();
+        }
+
         break;
     }
 
@@ -1020,14 +1171,63 @@ void inputTeclado(sf::RenderWindow& window, sf::Event& event, sf::Text& text) { 
     }
 }
 
+// Función que maneja el slider y devuelve el valor actual (0 a 40)
+int manejarSlider(sf::RenderWindow& window, sf::Vector2f posicion, float ancho) {
+    static sf::CircleShape deslizador(10);
+    static bool inicializado = false;
+    static bool arrastrando = false;
+
+    if (!inicializado) {
+        deslizador.setFillColor(sf::Color::Red);
+        deslizador.setOrigin(10, 10);
+        deslizador.setPosition(posicion.x, posicion.y + 2);
+        inicializado = true;
+    }
+
+    // Barra del slider
+    sf::RectangleShape barra(sf::Vector2f(ancho, 5));
+    barra.setPosition(posicion);
+    barra.setFillColor(sf::Color(200, 200, 200));
+
+    // Control de arrastre
+    sf::Vector2i mousePixel = sf::Mouse::getPosition(window);
+    sf::Vector2f mouse = window.mapPixelToCoords(mousePixel);
+
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+        if (deslizador.getGlobalBounds().contains(mouse)) {
+            arrastrando = true;
+        }
+    }
+    else {
+        arrastrando = false;
+    }
+
+    if (arrastrando) {
+        float x = mouse.x;
+        float minX = posicion.x;
+        float maxX = posicion.x + ancho;
+        if (x < minX) x = minX;
+        if (x > maxX) x = maxX;
+        deslizador.setPosition(x, posicion.y + 2);
+    }
+
+    // Dibujar
+    window.draw(barra);
+    window.draw(deslizador);
+
+    // Calcular valor entre 0 y 40
+    float valorRaw = 39.0f * ((deslizador.getPosition().x - posicion.x) / ancho);
+    return static_cast<int>(valorRaw + 0.5f);
+}
+
 int main() {
     sf::RenderWindow window(sf::VideoMode(700, 900), "Proyecto Final Parcial 2");
 
     bool escribiendoHabito = true;
     bool habitoCreado = false;
     bool escribiendoMeta = true;
-    bool metaCreada = false;
     Meta* miMeta = nullptr;
+    srand(time(NULL));
 
 
     initFonts();
@@ -1043,8 +1243,12 @@ int main() {
     initMenuAgregarHabito();
     initMenuAgregarMeta();
     initMenuHabitos();
+    initMenuMetaCantidad();
+    initMenuAumentarMeta();
+
 
     while (window.isOpen()) {
+
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
@@ -1053,6 +1257,7 @@ int main() {
             if (event.type == sf::Event::MouseButtonPressed)
                 handleMouseClick(window);
         }
+
 
         window.clear(sf::Color(190, 195, 210));
         switch (menuAbierto) {
@@ -1094,8 +1299,6 @@ int main() {
             drawMenuAgregarHabito(window);
             inputTeclado(window, event, InputIngresarHabito);
 
-            inputTeclado(window, event, InputIngresarHabito);
-
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
                 sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 
@@ -1114,71 +1317,77 @@ int main() {
                     }
                 }
             }
+
+
+
             break;
 
         case 7:
-            escribiendoMeta = !metaCreada;
+            escribiendoMeta = true;
             drawMenu0(window);
             drawMenu1(window);
             drawMenuAgregarMeta(window);
-
-            if (!metaCreada) {
-                if (campoMetaActivo == META) {
-                    inputTeclado(window, event, InputIngresarMeta);
-                    InputIngresarMeta.setString(currentInput);
-                }
-                else if (campoMetaActivo == CANTIDAD) {
-                    inputTeclado(window, event, InputIngresarMetaCantidad);
-                    InputIngresarMetaCantidad.setString(currentInput);
-                }
-
-                if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-                    sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-
-                    if (isMouseOver(s_botonCorrecto_HB, mousePos)) {
-                        std::string metaString = InputIngresarMeta.getString();
-                        std::string metaCantidadString = InputIngresarMetaCantidad.getString();
-
-                        // hacemos la conversion de string a double
-                        double cantidad = 0;
-                        try {
-                            cantidad = std::stod(metaCantidadString);
-                        }
-                        catch (...) {
-                            std::cout << "Cantidad inválida" << std::endl;
-                            break;
-                        }
-
-                        if (!metaString.empty()) {
-                            Corazon.crearMeta(metaString, cantidad);
-
-                            Meta* meta = Corazon.getMeta();
-                            if (meta && !meta->getTipoMeta().empty()) {
-                                std::string metaADesplegar = "Meta: " + meta->getTipoMeta() +
-                                    " (" + std::to_string(static_cast<int>(std::round(meta->getProgresoMeta()))) + "%)";
-                                MetaTexto.setString(metaADesplegar);
-                            }
-                            else {
-                                MetaTexto.setString("Meta: ");
-                            }
-
-                            metaCreada = true;
-                            escribiendoMeta = false;
-                            menuAbierto = 1;
-                            std::cout << "Meta Creada: " << metaString << " Cantidad: ";
-                        }
-                        else {
-                            std::cout << "Error: No se ingreso texto!" << std::endl;
-                        }
-                    }
-                }
-            }
+            inputTeclado(window, event, InputIngresarMeta);
             break;
+
+
         case 8:
             drawMenu0(window);
             drawMenu1(window);
             drawMenuHabitos(window);
+            break;
+
+        case 9: {
+            typingActive = true;
+            drawMenu0(window);
+            drawMenu1(window);
+            drawMenuMetaCantidad(window);
+
+            int valorSlider = manejarSlider(window, { 150, 550 }, 400);
+            string valorString = to_string(valorSlider);
+            InputIngresarMetaCantidad.setString(valorString);
+
+            window.draw(InputIngresarMetaCantidad);
+
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+                if (botonCorrecto_HB.getGlobalBounds().contains(mouse)) {
+                    double valorSliderDouble = static_cast<double>(valorSlider);
+                    Corazon.crearMeta(nombreMetaTemporal, valorSliderDouble);
+                    cout << "Intentando crear meta con: " << nombreMetaTemporal << " y " << valorSliderDouble << endl;
+                    cout << "Objeto " << Corazon.getNombreMeta() << "creado" << endl;
+                    sf::sleep(sf::milliseconds(200));// Evitar múltiples creaciones por mantener el botón presionado
+                }
+            }
+
+            break;
         }
+        case 10:
+            drawMenu0(window);
+            drawMenu1(window);
+            drawMenuAumentarMeta(window);
+            int sliderValor = manejarSlider(window, { 150, 550 }, 400);
+
+            string stringValor = to_string(sliderValor);
+            metaAumentada.setString(stringValor);
+
+            window.draw(metaAumentada);
+
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+                if (botonCorrecto_HB.getGlobalBounds().contains(mouse)) {
+
+                    Corazon.aumentarProgreso(sliderValor);
+                    Corazon.revisarMeta();
+
+                    sf::sleep(sf::milliseconds(200));// Evitar múltiples creaciones por mantener el botón presionado
+                }
+            }
+
+
+            break;
+        }
+
 
 
         window.display();
